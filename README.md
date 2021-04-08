@@ -11,7 +11,7 @@ voice-tablet is available under the [MIT Licence](./LICENCE).
 Feel free to contact me [on Twitter](https://twitter.com/sealjay_clj). For bugs, please [raise an issue on GitHub](https://github.com/Sealjay-clj/voice-tablet/issues).
 
 ## Contributing
-Contributions are more than welcome. This repository uses [Commitizen](https://github.com/commitizen/cz-cli#making-your-repo-commitizen-friendly) to support the use of[semantic commits](https://nitayneeman.com/posts/understanding-semantic-commit-messages-using-git-and-angular/#common-types), which requires you to have node and commitizen installed.
+Contributions are more than welcome. This repository uses [Commitizen](https://github.com/commitizen/cz-cli#making-your-repo-commitizen-friendly) to support the use of [semantic commits](https://nitayneeman.com/posts/understanding-semantic-commit-messages-using-git-and-angular/#common-types), which requires you to have node and commitizen installed.
 - Create a fork.
 - Create a feature branch `git checkout -b feature/featurename` in the [Gitflow style](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow).
 - Commit your changes `git commit -am 'Bug: Fixed a bug'` using
