@@ -1,8 +1,45 @@
 import Head from "next/head";
+import React, { useRef, useLayoutEffect, useState } from "react";
+import SignatureCanvas from "react-signature-canvas";
+import ButtonBox from "../components/ButtonBox";
+import { SpeakerphoneIcon, TrashIcon } from "@heroicons/react/outline";
+
+const buttons = [
+  {
+    name: "Speak",
+    action: () => {
+      alert("This should speak text out loud.");
+    },
+    icon: SpeakerphoneIcon,
+  },
+  {
+    name: "Trash",
+    action: () => {
+      alert("This should wipe what's been written.");
+    },
+    icon: TrashIcon,
+  },
+];
 
 export default function Home() {
+  const targetRef = useRef();
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const identifiedText = useState("");
+
+  useLayoutEffect(() => {
+    if (targetRef.current) {
+      setDimensions({
+        width: targetRef.current.offsetWidth,
+        height: targetRef.current.offsetHeight - 100,
+      });
+    }
+  }, []);
+
   return (
-    <main className="max-w-7xl mx-auto sm:px-6 lg:px-8 min-h-screen">
+    <main
+      ref={targetRef}
+      className="max-w-7xl mx-auto sm:px-6 lg:px-8 min-h-screen"
+    >
       <Head>
         <title>Voice Tablet</title>
         <link rel="icon" href="/favicon.ico" />
@@ -10,26 +47,18 @@ export default function Home() {
       <h1 className="text-base font-semibold text-indigo-600 tracking-wide uppercase">
         Voice Tablet
       </h1>
-
-      <button
-        type="button"
-        className="mb-2 mr-2 bottom-0 right-0 absolute block inline-flex items-center p-3 border border-transparent rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"
-          />
-        </svg>
-      </button>
+      <div className="min-h-300 h-5/6">
+        <SignatureCanvas
+          penColor="green"
+          canvasProps={{
+            width: dimensions.width,
+            height: dimensions.height,
+            className: "sigCanvas border-dashed border-4 border-light-blue-500",
+          }}
+        />
+      </div>
+      <p>{identifiedText}</p>
+      <ButtonBox buttons={buttons} />
     </main>
   );
 }
