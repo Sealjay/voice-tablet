@@ -4,40 +4,68 @@ import SignatureCanvas from "react-signature-canvas";
 import ButtonBox from "../components/ButtonBox";
 import { SpeakerphoneIcon, TrashIcon } from "@heroicons/react/outline";
 
-const buttons = [
-  {
-    name: "Speak",
-    action: () => {
-      alert("This should speak text out loud.");
-    },
-    icon: SpeakerphoneIcon,
-  },
-  {
-    name: "Trash",
-    action: () => {
-      alert("This should wipe what's been written.");
-    },
-    icon: TrashIcon,
-  },
-];
+// TODO: Use SWR https://nextjs.org/docs/basic-features/data-fetching
+
+/*
+async function readCanvas(base64String) {
+  var buffer = Buffer.from(base64String, "base64");
+  var stream = streamifier.createReadStream(buffer);
+  const captionLocal = (
+    await computerVisionClient.describeImageInStream(() =>
+      createReadStream(stream)
+    )
+  ).captions[0];
+  console.log(
+    `This may be ${caption.text} (${captionLocal.confidence.toFixed(
+      2
+    )} confidence)`
+  );
+}*/
 
 export default function Home() {
-  const targetRef = useRef();
+  const containerRef = useRef();
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const identifiedText = useState("");
+  const [identifiedText, setIdentifiedText] = useState("");
+  let canvasRef;
+
+  const doneDrawing = () => {
+    setIdentifiedText("This is where your recognised handwriting would go.");
+    // TODO: Pass the data to Computer Vision readCanvas(canvasRef.toDataURL());
+    //    TODO: Use SWR https://nextjs.org/docs/basic-features/data-fetching
+  };
+
+  const wipeScreen = () => {
+    canvasRef.clear();
+    setIdentifiedText("");
+  };
+
+  const buttons = [
+    {
+      name: "Speak",
+      action: () => {
+        alert("This should speak text out loud."); // TODO: Read the identifiedtext variable and read out loud
+      },
+      icon: SpeakerphoneIcon,
+    },
+    {
+      name: "Trash",
+      action: wipeScreen,
+      icon: TrashIcon,
+    },
+  ];
 
   useLayoutEffect(() => {
-    if (targetRef.current) {
+    if (containerRef.current) {
       setDimensions({
-        width: targetRef.current.offsetWidth,
-        height: targetRef.current.offsetHeight - 100,
+        width: containerRef.current.offsetWidth,
+        height: containerRef.current.offsetHeight - 100,
       });
     }
   }, []);
 
   return (
     <main
-      ref={targetRef}
+      ref={containerRef}
       className="max-w-7xl mx-auto sm:px-6 lg:px-8 min-h-screen"
     >
       <Head>
@@ -49,7 +77,11 @@ export default function Home() {
       </h1>
       <div className="min-h-300 h-5/6">
         <SignatureCanvas
-          penColor="green"
+          penColor="rgb(79, 70, 229)"
+          ref={(ref) => {
+            canvasRef = ref;
+          }}
+          onEnd={doneDrawing}
           canvasProps={{
             width: dimensions.width,
             height: dimensions.height,
@@ -58,6 +90,18 @@ export default function Home() {
         />
       </div>
       <p>{identifiedText}</p>
+      <footer>
+        <small>
+          Copyright &copy; Chris Lloyd-Jones 2021.{" "}
+          <a
+            className="underline hover:no-underline"
+            href="https://sealjay.com"
+            target="_blank"
+          >
+            Released under the MIT licence.
+          </a>
+        </small>
+      </footer>
       <ButtonBox buttons={buttons} />
     </main>
   );
