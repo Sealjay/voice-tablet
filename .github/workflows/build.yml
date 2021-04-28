@@ -1,0 +1,30 @@
+name: Build Docker Containers
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "voice-tablet/**"
+  workflow_dispatch:
+
+concurrency:
+  group: main_branch_build
+  cancel-in-progress: true
+
+jobs:
+  build-voice-tablet:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: voice-tablet
+    steps:
+      - uses: actions/checkout@v2
+      - uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_REGISTRY }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+      - run: |
+          docker build . -t ${{ secrets.ACR_REGISTRY }}/voice-tablet:${{ github.sha }} -t ${{ secrets.ACR_REGISTRY }}/voice-tablet:latest
+          docker push ${{ secrets.ACR_REGISTRY }}/voice-tablet
